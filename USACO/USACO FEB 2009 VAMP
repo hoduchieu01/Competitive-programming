@@ -1,0 +1,93 @@
+// USACO
+//USACO FEB 2009 VAMP
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define SZ(x) (int((x).size()))
+struct qitem
+{
+    int v;
+    int k;
+    ll p;
+
+    qitem() {}
+    qitem(int v, int k, ll p) : v(v), k(k), p(p) {}
+
+    bool operator <(const qitem &q) const
+    {
+        return p > q.p;
+    }
+};
+
+struct edge
+{
+    int trg;
+    int cost;
+
+    edge() {}
+    edge(int t, int c) : trg(t), cost(c) {}
+};
+
+
+int main()
+{
+    int N, M, K;
+    vector<vector<edge> > edges;
+    cin >> N >> M >> K;
+    edges.resize(N);
+    for (int i = 0; i < M; i++)
+    {
+        int a, b, c;
+        cin >> a >> b >> c;
+        a--;
+        b--;
+        edges[a].push_back(edge(b, c));
+        edges[b].push_back(edge(a, c));
+    }
+
+    priority_queue<qitem> q;
+    ll prio[N][K + 1];
+    for (int i = 1; i < N; i++)
+        for (int j = 0; j <= K; j++)
+            prio[i][j] = LONG_LONG_MAX;
+    for (int j = 0; j <= K; j++)
+    {
+        prio[0][j] = 0LL;
+        q.push(qitem(0, j, 0LL));
+    }
+
+    while (!q.empty())
+    {
+        qitem c = q.top();
+        q.pop();
+        if (prio[c.v][c.k] != c.p)
+            continue;
+
+        for (int i = 0; i < SZ(edges[c.v]); i++)
+        {
+            int nxtv = edges[c.v][i].trg;
+            int nxtk = c.k;
+            ll nxtp = c.p + edges[c.v][i].cost;
+            if (nxtp < prio[nxtv][nxtk])
+            {
+                prio[nxtv][nxtk] = nxtp;
+                q.push(qitem(nxtv, nxtk, nxtp));
+            }
+
+            if (nxtk < K)
+            {
+                nxtk++;
+                nxtp = c.p;
+                if (nxtp < prio[nxtv][nxtk])
+                {
+                    prio[nxtv][nxtk] = nxtp;
+                    q.push(qitem(nxtv, nxtk, nxtp));
+                }
+            }
+        }
+    }
+
+    cout << prio[N - 1][K] << "\n";
+
+    return 0;
+}
