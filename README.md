@@ -1,6 +1,1 @@
-# Competitive-programming
-## Spoj
-## USACO
-## CEOI
-## COCI
-## Algorithms
+## Source code for competitive programming contests
